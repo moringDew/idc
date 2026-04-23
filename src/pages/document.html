@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>协同平台 - 公文管理</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>协同管理平台</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <li><a href="index.html"><i class="fas fa-home"></i><span>工作台</span></a></li>
+                <li><a href="document.html" class="active"><i class="fas fa-file-alt"></i><span>公文管理</span></a></li>
+                <li><a href="approval.html"><i class="fas fa-file-check"></i><span>流程审批</span></a></li>
+                <li><a href="knowledge.html"><i class="fas fa-book"></i><span>知识文档</span></a></li>
+                <li><a href="meeting.html"><i class="fas fa-calendar"></i><span>会议管理</span></a></li>
+                <li><a href="monitor.html"><i class="fas fa-chart-bar"></i><span>督办监控</span></a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a></li>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="top-nav-left">
+                    <h3>公文管理</h3>
+                </div>
+                <div class="top-nav-right">
+                    <div style="position: relative;">
+                        <i class="fas fa-bell" style="font-size: 20px; color: #666; cursor: pointer;"></i>
+                        <span style="position: absolute; top: -4px; right: -6px; background: red; color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px;">3</span>
+                    </div>
+                    <div class="user-info">
+                        <span>管理员</span>
+                        <div class="user-avatar">管</div>
+                    </div>
+                </div>
+            </header>
+            <div class="content-area">
+                <div class="breadcrumb">
+                    <a href="index.html">首页</a>
+                    <span><i class="fas fa-angle-right"></i></span>
+                    <span>公文管理</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">公文列表</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="showCreateModal()">
+                                <i class="fas fa-plus"></i> 新建公文
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="搜索公文标题...">
+                    </div>
+
+                    <div class="filter-bar">
+                        <select>
+                            <option>全部类型</option>
+                            <option>通知</option>
+                            <option>请示</option>
+                            <option>报告</option>
+                            <option>通报</option>
+                            <option>决定</option>
+                        </select>
+                        <select>
+                            <option>全部状态</option>
+                            <option>草稿</option>
+                            <option>待审批</option>
+                            <option>已通过</option>
+                            <option>已驳回</option>
+                        </select>
+                        <input type="date" placeholder="开始日期">
+                        <input type="date" placeholder="结束日期">
+                        <button class="btn btn-secondary">筛选</button>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">编号</th>
+                                <th>标题</th>
+                                <th>类型</th>
+                                <th>发文单位</th>
+                                <th>发文日期</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-001</td>
+                                <td>关于开展年度训练考核的通知</td>
+                                <td>通知</td>
+                                <td>司令部</td>
+                                <td>2024-01-15</td>
+                                <td><span class="status pending">待审批</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; margin-right: 5px;">编辑</button>
+                                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">查看</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-002</td>
+                                <td>关于申请采购办公设备的请示</td>
+                                <td>请示</td>
+                                <td>后勤处</td>
+                                <td>2024-01-14</td>
+                                <td><span class="status processing">处理中</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; margin-right: 5px;">编辑</button>
+                                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">查看</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-003</td>
+                                <td>关于表彰优秀士兵的通报</td>
+                                <td>通报</td>
+                                <td>政治处</td>
+                                <td>2024-01-13</td>
+                                <td><span class="status approved">已通过</span></td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">查看</button>
+                                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">打印</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-004</td>
+                                <td>关于加强安全管理的决定</td>
+                                <td>决定</td>
+                                <td>办公室</td>
+                                <td>2024-01-12</td>
+                                <td><span class="status rejected">已驳回</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; margin-right: 5px;">编辑</button>
+                                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">查看</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-005</td>
+                                <td>关于年度工作总结的报告</td>
+                                <td>报告</td>
+                                <td>政治处</td>
+                                <td>2024-01-11</td>
+                                <td><span class="status approved">已通过</span></td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">查看</button>
+                                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">打印</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <button disabled>上一页</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>4</button>
+                        <button>5</button>
+                        <button>下一页</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>新建公文</h3>
+                <button class="modal-close" onclick="hideCreateModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>公文标题</label>
+                    <input type="text" placeholder="请输入公文标题">
+                </div>
+                <div class="form-group">
+                    <label>公文类型</label>
+                    <select>
+                        <option>通知</option>
+                        <option>请示</option>
+                        <option>报告</option>
+                        <option>通报</option>
+                        <option>决定</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>发文单位</label>
+                    <input type="text" placeholder="请输入发文单位">
+                </div>
+                <div class="form-group">
+                    <label>主送机关</label>
+                    <input type="text" placeholder="请输入主送机关">
+                </div>
+                <div class="form-group">
+                    <label>公文内容</label>
+                    <textarea placeholder="请输入公文内容"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>附件</label>
+                    <input type="file" multiple>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideCreateModal()">取消</button>
+                <button class="btn btn-primary">保存并提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+</body>
+</html>

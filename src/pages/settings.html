@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>协同平台 - 系统设置</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>协同管理平台</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <li><a href="index.html"><i class="fas fa-home"></i><span>工作台</span></a></li>
+                <li><a href="document.html"><i class="fas fa-file-alt"></i><span>公文管理</span></a></li>
+                <li><a href="approval.html"><i class="fas fa-file-check"></i><span>流程审批</span></a></li>
+                <li><a href="knowledge.html"><i class="fas fa-book"></i><span>知识文档</span></a></li>
+                <li><a href="meeting.html"><i class="fas fa-calendar"></i><span>会议管理</span></a></li>
+                <li><a href="monitor.html"><i class="fas fa-chart-bar"></i><span>督办监控</span></a></li>
+                <li><a href="settings.html" class="active"><i class="fas fa-cog"></i><span>系统设置</span></a></li>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="top-nav-left">
+                    <h3>系统设置</h3>
+                </div>
+                <div class="top-nav-right">
+                    <div style="position: relative;">
+                        <i class="fas fa-bell" style="font-size: 20px; color: #666; cursor: pointer;"></i>
+                        <span style="position: absolute; top: -4px; right: -6px; background: red; color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px;">3</span>
+                    </div>
+                    <div class="user-info">
+                        <span>管理员</span>
+                        <div class="user-avatar">管</div>
+                    </div>
+                </div>
+            </header>
+            <div class="content-area">
+                <div class="breadcrumb">
+                    <a href="index.html">首页</a>
+                    <span><i class="fas fa-angle-right"></i></span>
+                    <span>系统设置</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 200px 1fr; gap: 24px;">
+                    <div style="background: white; border-radius: 12px; padding: 16px; height: fit-content;">
+                        <h4 style="font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;">设置菜单</h4>
+                        <nav style="list-style: none;">
+                            <li style="margin-bottom: 8px;">
+                                <a href="#" style="display: flex; align-items: center; padding: 10px 12px; color: #333; text-decoration: none; border-radius: 6px; transition: all 0.3s; background: #1e3c72; color: white;">
+                                    <i class="fas fa-users" style="margin-right: 10px;"></i> 用户管理
+                                </a>
+                            </li>
+                            <li style="margin-bottom: 8px;">
+                                <a href="#" style="display: flex; align-items: center; padding: 10px 12px; color: #333; text-decoration: none; border-radius: 6px; transition: all 0.3s;">
+                                    <i class="fas fa-user-tag" style="margin-right: 10px;"></i> 角色权限
+                                </a>
+                            </li>
+                            <li style="margin-bottom: 8px;">
+                                <a href="#" style="display: flex; align-items: center; padding: 10px 12px; color: #333; text-decoration: none; border-radius: 6px; transition: all 0.3s;">
+                                    <i class="fas fa-building" style="margin-right: 10px;"></i> 部门管理
+                                </a>
+                            </li>
+                            <li style="margin-bottom: 8px;">
+                                <a href="#" style="display: flex; align-items: center; padding: 10px 12px; color: #333; text-decoration: none; border-radius: 6px; transition: all 0.3s;">
+                                    <i class="fas fa-cog" style="margin-right: 10px;"></i> 系统配置
+                                </a>
+                            </li>
+                            <li style="margin-bottom: 8px;">
+                                <a href="#" style="display: flex; align-items: center; padding: 10px 12px; color: #333; text-decoration: none; border-radius: 6px; transition: all 0.3s;">
+                                    <i class="fas fa-file-export" style="margin-right: 10px;"></i> 数据备份
+                                </a>
+                            </li>
+                        </nav>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">用户管理</div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="showCreateUser()">
+                                    <i class="fas fa-plus"></i> 新增用户
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="搜索用户名...">
+                        </div>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">序号</th>
+                                    <th>用户名</th>
+                                    <th>姓名</th>
+                                    <th>部门</th>
+                                    <th>角色</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>admin</td>
+                                    <td>管理员</td>
+                                    <td>办公室</td>
+                                    <td>超级管理员</td>
+                                    <td><span class="status approved">启用</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; margin-right: 5px;">编辑</button>
+                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;">禁用</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>zhangxx</td>
+                                    <td>张XX</td>
+                                    <td>司令部</td>
+                                    <td>部门管理员</td>
+                                    <td><span class="status approved">启用</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; margin-right: 5px;">编辑</button>
+                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;">禁用</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>lixx</td>
+                                    <td>李XX</td>
+                                    <td>政治处</td>
+                                    <td>普通用户</td>
+                                    <td><span class="status approved">启用</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; margin-right: 5px;">编辑</button>
+                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;">禁用</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>wangxx</td>
+                                    <td>王XX</td>
+                                    <td>后勤处</td>
+                                    <td>普通用户</td>
+                                    <td><span class="status rejected">禁用</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; margin-right: 5px;">编辑</button>
+                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 12px;">启用</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="pagination">
+                            <button disabled>上一页</button>
+                            <button class="active">1</button>
+                            <button>2</button>
+                            <button>3</button>
+                            <button>4</button>
+                            <button>5</button>
+                            <button>下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="createUserModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>新增用户</h3>
+                <button class="modal-close" onclick="hideCreateUser()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>姓名</label>
+                    <input type="text" placeholder="请输入姓名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <input type="password" placeholder="请确认密码">
+                </div>
+                <div class="form-group">
+                    <label>部门</label>
+                    <select>
+                        <option>办公室</option>
+                        <option>司令部</option>
+                        <option>政治处</option>
+                        <option>后勤处</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>角色</label>
+                    <select>
+                        <option>超级管理员</option>
+                        <option>部门管理员</option>
+                        <option>普通用户</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideCreateUser()">取消</button>
+                <button class="btn btn-primary">创建用户</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+</body>
+</html>

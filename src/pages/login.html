@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>协同平台 - 登录</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <div style="font-size: 48px; margin-bottom: 12px;">
+                    <i class="fas fa-shield-alt" style="color: #1e3c72;"></i>
+                </div>
+                <h1>武警贵州总队六盘水支队</h1>
+                <p>协同管理平台</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                </div>
+                <div class="form-group">
+                    <label for="captcha">验证码</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="captcha" name="captcha" placeholder="请输入验证码" required style="flex: 1;">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCAyMDAgNjAiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmNWY3ZmEiLz48dGV4dCB4PSIxMDBweSIgeT0iMzZweCIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIj5TR04gMTAwPC90ZXh0Pjwvc3ZnPg==" alt="验证码" style="width: 100px; height: 44px; border-radius: 6px;">
+                    </div>
+                </div>
+                <button type="submit">登录</button>
+            </form>
+            <div class="login-links">
+                <a href="#">忘记密码?</a>
+                <a href="#">联系管理员</a>
+            </div>
+        </div>
+    </div>
+    <script src="../js/app.js"></script>
+</body>
+</html>
