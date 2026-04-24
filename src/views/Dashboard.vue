@@ -2,7 +2,7 @@
   <div class="layout-container">
     <Sidebar />
     <main class="main-content">
-      <TopNav title="工作台" />
+      <TopNav title="工作台" :username="currentUser.name" :userId="currentUser.id" />
       <div class="content-area">
         <div class="stats-grid">
           <div class="stat-card" v-for="stat in stats" :key="stat.label">
@@ -87,6 +87,8 @@ import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
 import { getDocuments, getApprovals, getTasks } from '@/api'
 
+const currentUser = ref({ id: '1', name: '管理员' })
+
 const stats = ref([
   { value: '0', label: '待处理公文', icon: 'fas fa-file-text', color: 'blue' },
   { value: '0', label: '已完成审批', icon: 'fas fa-check-circle', color: 'green' },
@@ -119,7 +121,16 @@ const handleDocAction = (doc) => {
   console.log('Action on:', doc.title)
 }
 
+const loadCurrentUser = () => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    const user = JSON.parse(userStr)
+    currentUser.value = { id: user.id.toString(), name: user.name }
+  }
+}
+
 const loadData = async () => {
+  loadCurrentUser()
   try {
     const docResponse = await getDocuments({ status: 'pending' })
     if (docResponse.code === 200) {

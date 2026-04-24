@@ -31,3 +31,10 @@ INSERT INTO monitor_task (title, department, person, deadline, priority, progres
 ('完善安全管理制度', '政治处', '王XX', '2024-01-18', 'important', 100, 'completed'),
 ('采购办公设备', '后勤处', '张XX', '2024-01-16', 'urgent', 30, 'pending'),
 ('组织年度考核', '司令部', '赵XX', '2024-01-14', 'normal', 100, 'completed');
+
+INSERT INTO notification (user_id, title, content, type, `read`) VALUES 
+('1', '新的公文待审批', '有一份新的公文需要您审批：关于申请采购办公设备的请示', 'info', FALSE),
+('1', '会议提醒', '党委扩大会议将于今天14:30开始，请准时参加', 'info', FALSE),
+('1', '任务督办', '您有一项督办任务即将到期：完成年度训练计划编制', 'warning', FALSE),
+('2', '部门通知', '请及时提交本部门年度工作总结', 'info', FALSE),
+('3', '审批通过', '您提交的请示已通过审批', 'success', FALSE);

@@ -2,7 +2,7 @@
   <div class="layout-container">
     <Sidebar />
     <main class="main-content">
-      <TopNav title="会议管理" />
+      <TopNav title="会议管理" :username="currentUser.name" :userId="currentUser.id" />
       <div class="content-area">
         <div class="breadcrumb">
           <router-link to="/dashboard">首页</router-link>
@@ -148,6 +148,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
 import { getMeetings, createMeeting } from '@/api'
 
+const currentUser = ref({ id: '1', name: '管理员' })
 const filterStatus = ref('')
 const filterType = ref('')
 const filterDate = ref('')

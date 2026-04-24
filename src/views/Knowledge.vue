@@ -2,7 +2,7 @@
   <div class="layout-container">
     <Sidebar />
     <main class="main-content">
-      <TopNav title="知识文档" />
+      <TopNav title="知识文档" :username="currentUser.name" :userId="currentUser.id" />
       <div class="content-area">
         <div class="breadcrumb">
           <router-link to="/dashboard">首页</router-link>
@@ -130,6 +130,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
 import { getKnowledge, createKnowledge } from '@/api'
 
+const currentUser = ref({ id: '1', name: '管理员' })
 const searchKeyword = ref('')
 const activeTab = ref('all')
 const showUploadModal = ref(false)

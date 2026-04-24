@@ -2,7 +2,7 @@
   <div class="layout-container">
     <Sidebar />
     <main class="main-content">
-      <TopNav title="公文管理" />
+      <TopNav title="公文管理" :username="currentUser.name" :userId="currentUser.id" />
       <div class="content-area">
         <div class="breadcrumb">
           <router-link to="/dashboard">首页</router-link>
@@ -150,6 +150,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
 import { getDocuments, createDocument, updateDocument } from '@/api'
 
+const currentUser = ref({ id: '1', name: '管理员' })
 const searchKeyword = ref('')
 const filterType = ref('')
 const filterStatus = ref('')

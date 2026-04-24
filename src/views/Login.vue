@@ -84,7 +84,7 @@ const handleLogin = async () => {
   try {
     const response = await login(form.username, form.password)
     if (response.code === 200) {
-      sessionStorage.setItem('user', JSON.stringify(response.data))
+      localStorage.setItem('user', JSON.stringify(response.data))
       router.push('/dashboard')
     } else {
       errorMessage.value = response.message || '登录失败'

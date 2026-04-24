@@ -2,7 +2,7 @@
   <div class="layout-container">
     <Sidebar />
     <main class="main-content">
-      <TopNav title="系统设置" />
+      <TopNav title="系统设置" :username="currentUser.name" :userId="currentUser.id" />
       <div class="content-area">
         <div class="breadcrumb">
           <router-link to="/dashboard">首页</router-link>
@@ -180,6 +180,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
 import { getUsers, createUser, updateUser, toggleUserStatus } from '@/api'
 
+const currentUser = ref({ id: '1', name: '管理员' })
 const activeMenu = ref('users')
 const searchKeyword = ref('')
 const currentPage = ref(1)

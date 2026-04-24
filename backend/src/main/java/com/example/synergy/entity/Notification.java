@@ -1,0 +1,43 @@
+package com.example.synergy.entity;
+
+import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "notification")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Notification {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 50)
+    private String userId;
+
+    @Column(nullable = false, length = 200)
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    @Column(length = 20)
+    private String type = "info";
+
+    @Column(name = "`read`", nullable = false)
+    private Boolean read = false;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+}
