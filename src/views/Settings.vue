@@ -68,7 +68,7 @@
                         class="btn" 
                         :class="user.status === 'enabled' ? 'btn-danger' : 'btn-success'" 
                         style="padding: 4px 10px; font-size: 12px;"
-                        @click="toggleUserStatus(user)"
+                        @click="handleToggleStatus(user)"
                       >{{ user.status === 'enabled' ? '禁用' : '启用' }}</button>
                     </td>
                   </tr>
@@ -175,15 +175,17 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
+import { getUsers, createUser, updateUser, toggleUserStatus } from '@/api'
 
 const activeMenu = ref('users')
 const searchKeyword = ref('')
 const currentPage = ref(1)
 const showCreateUserModal = ref(false)
 const editingUser = ref(null)
+const allUsers = ref([])
 
 const form = reactive({
   username: '',
@@ -202,15 +204,8 @@ const settingsMenu = [
   { key: 'backup', label: '数据备份', icon: 'fas fa-file-export' }
 ]
 
-const users = ref([
-  { id: 1, username: 'admin', name: '管理员', department: '办公室', role: '超级管理员', status: 'enabled' },
-  { id: 2, username: 'zhangxx', name: '张XX', department: '司令部', role: '部门管理员', status: 'enabled' },
-  { id: 3, username: 'lixx', name: '李XX', department: '政治处', role: '普通用户', status: 'enabled' },
-  { id: 4, username: 'wangxx', name: '王XX', department: '后勤处', role: '普通用户', status: 'disabled' }
-])
-
 const filteredUsers = computed(() => {
-  return users.value.filter(user => {
+  return allUsers.value.filter(user => {
     return !searchKeyword.value || user.username.includes(searchKeyword.value) || user.name.includes(searchKeyword.value)
   })
 })
@@ -234,8 +229,15 @@ const editUser = (user) => {
   showCreateUserModal.value = true
 }
 
-const toggleUserStatus = (user) => {
-  user.status = user.status === 'enabled' ? 'disabled' : 'enabled'
+const handleToggleStatus = async (user) => {
+  try {
+    const response = await toggleUserStatus(user.id)
+    if (response.code === 200) {
+      user.status = user.status === 'enabled' ? 'disabled' : 'enabled'
+    }
+  } catch (error) {
+    console.error('Failed to toggle status:', error)
+  }
 }
 
 const closeModal = () => {
@@ -246,24 +248,51 @@ const closeModal = () => {
   form.role = '普通用户'
 }
 
-const saveUser = () => {
-  if (editingUser.value) {
-    const index = users.value.findIndex(u => u.id === editingUser.value.id)
-    if (index !== -1) {
-      users.value[index] = { ...users.value[index], ...form }
+const saveUser = async () => {
+  try {
+    if (editingUser.value) {
+      const response = await updateUser(editingUser.value.id, {
+        username: form.username,
+        name: form.name,
+        department: form.department,
+        role: form.role
+      })
+      if (response.code === 200) {
+        const index = allUsers.value.findIndex(u => u.id === editingUser.value.id)
+        if (index !== -1) {
+          allUsers.value[index] = { ...allUsers.value[index], ...response.data }
+        }
+      }
+    } else {
+      const response = await createUser({
+        username: form.username,
+        password: form.password,
+        name: form.name,
+        department: form.department,
+        role: form.role
+      })
+      if (response.code === 200) {
+        allUsers.value.unshift(response.data)
+      }
     }
-  } else {
-    users.value.unshift({
-      id: Date.now(),
-      username: form.username,
-      name: form.name,
-      department: form.department,
-      role: form.role,
-      status: 'enabled'
-    })
+    closeModal()
+  } catch (error) {
+    console.error('Failed to save user:', error)
   }
-  closeModal()
 }
+
+const loadUsers = async () => {
+  try {
+    const response = await getUsers()
+    if (response.code === 200) {
+      allUsers.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to load users:', error)
+  }
+}
+
+onMounted(loadUsers)
 </script>
 
 <style scoped>

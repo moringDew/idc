@@ -55,8 +55,8 @@
               </div>
               <div class="approval-actions">
                 <button class="btn btn-secondary" @click="viewDetail(item)">查看详情</button>
-                <button class="btn btn-danger" @click="reject(item)">驳回</button>
-                <button class="btn btn-success" @click="approve(item)">同意</button>
+                <button class="btn btn-danger" @click="handleReject(item)">驳回</button>
+                <button class="btn btn-success" @click="handleApprove(item)">同意</button>
               </div>
             </div>
           </div>
@@ -105,9 +105,10 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
+import { getApprovals, createApproval, approve, reject } from '@/api'
 
 const showCreateModal = ref(false)
 
@@ -118,34 +119,13 @@ const form = reactive({
 })
 
 const stats = ref([
-  { value: '12', label: '待我审批', icon: 'fas fa-clock', color: 'blue' },
-  { value: '28', label: '我已审批', icon: 'fas fa-check-circle', color: 'green' },
-  { value: '8', label: '我发起的', icon: 'fas fa-file-invoice', color: 'orange' },
-  { value: '5', label: '知会我', icon: 'fas fa-eye', color: 'red' }
+  { value: '0', label: '待我审批', icon: 'fas fa-clock', color: 'blue' },
+  { value: '0', label: '我已审批', icon: 'fas fa-check-circle', color: 'green' },
+  { value: '0', label: '我发起的', icon: 'fas fa-file-invoice', color: 'orange' },
+  { value: '0', label: '知会我', icon: 'fas fa-eye', color: 'red' }
 ])
 
-const pendingApprovals = ref([
-  {
-    id: 1,
-    title: '关于申请采购办公设备的请示',
-    type: '采购审批',
-    applicant: '张XX',
-    department: '后勤处',
-    time: '2024-01-14 10:30',
-    content: '因工作需要，申请采购办公电脑10台，打印机2台，预算共计5万元。',
-    status: 'pending'
-  },
-  {
-    id: 2,
-    title: '关于年度训练计划的审批',
-    type: '训练计划审批',
-    applicant: '李XX',
-    department: '司令部',
-    time: '2024-01-15 09:15',
-    content: '根据年度训练大纲要求，制定2024年度训练计划，请审批。',
-    status: 'pending'
-  }
-])
+const pendingApprovals = ref([])
 
 const getStatusText = (status) => {
   const statusMap = {
@@ -161,30 +141,72 @@ const viewDetail = (item) => {
   console.log('View detail:', item.title)
 }
 
-const reject = (item) => {
-  item.status = 'rejected'
+const handleReject = async (item) => {
+  try {
+    const response = await reject(item.id)
+    if (response.code === 200) {
+      item.status = 'rejected'
+    }
+  } catch (error) {
+    console.error('Failed to reject:', error)
+  }
 }
 
-const approve = (item) => {
-  item.status = 'approved'
+const handleApprove = async (item) => {
+  try {
+    const response = await approve(item.id)
+    if (response.code === 200) {
+      item.status = 'approved'
+    }
+  } catch (error) {
+    console.error('Failed to approve:', error)
+  }
 }
 
-const submitApproval = () => {
-  pendingApprovals.value.unshift({
-    id: Date.now(),
-    title: form.title,
-    type: form.type,
-    applicant: '管理员',
-    department: '办公室',
-    time: new Date().toLocaleString('zh-CN'),
-    content: form.content,
-    status: 'pending'
-  })
-  showCreateModal.value = false
-  form.type = '采购审批'
-  form.title = ''
-  form.content = ''
+const submitApproval = async () => {
+  try {
+    const response = await createApproval({
+      title: form.title,
+      type: form.type,
+      applicant: '管理员',
+      applicantDepartment: '办公室',
+      content: form.content,
+      status: 'pending'
+    })
+    if (response.code === 200) {
+      pendingApprovals.value.unshift({
+        ...response.data,
+        department: response.data.applicantDepartment,
+        time: response.data.createdAt
+      })
+    }
+    showCreateModal.value = false
+    form.type = '采购审批'
+    form.title = ''
+    form.content = ''
+  } catch (error) {
+    console.error('Failed to create approval:', error)
+  }
 }
+
+const loadApprovals = async () => {
+  try {
+    const response = await getApprovals()
+    if (response.code === 200) {
+      pendingApprovals.value = response.data.map(item => ({
+        ...item,
+        department: item.applicantDepartment,
+        time: item.createdAt
+      }))
+      stats.value[0].value = pendingApprovals.value.filter(a => a.status === 'pending').length.toString()
+      stats.value[1].value = pendingApprovals.value.filter(a => a.status === 'approved').length.toString()
+    }
+  } catch (error) {
+    console.error('Failed to load approvals:', error)
+  }
+}
+
+onMounted(loadApprovals)
 </script>
 
 <style scoped>

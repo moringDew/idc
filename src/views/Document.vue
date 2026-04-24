@@ -145,9 +145,10 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
+import { getDocuments, createDocument, updateDocument } from '@/api'
 
 const searchKeyword = ref('')
 const filterType = ref('')
@@ -157,6 +158,7 @@ const endDate = ref('')
 const currentPage = ref(1)
 const showCreateModal = ref(false)
 const editingDoc = ref(null)
+const allDocuments = ref([])
 
 const form = reactive({
   title: '',
@@ -166,16 +168,8 @@ const form = reactive({
   content: ''
 })
 
-const documents = ref([
-  { id: 1, code: '2024-001', title: '关于开展年度训练考核的通知', type: '通知', department: '司令部', date: '2024-01-15', status: 'pending' },
-  { id: 2, code: '2024-002', title: '关于申请采购办公设备的请示', type: '请示', department: '后勤处', date: '2024-01-14', status: 'processing' },
-  { id: 3, code: '2024-003', title: '关于表彰优秀士兵的通报', type: '通报', department: '政治处', date: '2024-01-13', status: 'approved' },
-  { id: 4, code: '2024-004', title: '关于加强安全管理的决定', type: '决定', department: '办公室', date: '2024-01-12', status: 'rejected' },
-  { id: 5, code: '2024-005', title: '关于年度工作总结的报告', type: '报告', department: '政治处', date: '2024-01-11', status: 'approved' }
-])
-
 const filteredDocuments = computed(() => {
-  return documents.value.filter(doc => {
+  return allDocuments.value.filter(doc => {
     const matchKeyword = !searchKeyword.value || doc.title.includes(searchKeyword.value)
     const matchType = !filterType.value || doc.type === filterType.value
     const matchStatus = !filterStatus.value || doc.status === filterStatus.value
@@ -220,26 +214,43 @@ const viewDocument = (doc) => {
   console.log('View document:', doc.title)
 }
 
-const saveDocument = () => {
-  if (editingDoc.value) {
-    const index = documents.value.findIndex(d => d.id === editingDoc.value.id)
-    if (index !== -1) {
-      documents.value[index] = { ...documents.value[index], ...form }
+const saveDocument = async () => {
+  try {
+    if (editingDoc.value) {
+      const response = await updateDocument(editingDoc.value.id, form)
+      if (response.code === 200) {
+        const index = allDocuments.value.findIndex(d => d.id === editingDoc.value.id)
+        if (index !== -1) {
+          allDocuments.value[index] = { ...allDocuments.value[index], ...response.data }
+        }
+      }
+    } else {
+      const response = await createDocument(form)
+      if (response.code === 200) {
+        allDocuments.value.unshift(response.data)
+      }
     }
-  } else {
-    documents.value.unshift({
-      id: Date.now(),
-      code: `2024-${String(documents.value.length + 1).padStart(3, '0')}`,
-      date: new Date().toISOString().split('T')[0],
-      status: 'pending',
-      ...form
-    })
+    showCreateModal.value = false
+    editingDoc.value = null
+    Object.keys(form).forEach(key => form[key] = '')
+    form.type = '通知'
+  } catch (error) {
+    console.error('Failed to save document:', error)
   }
-  showCreateModal.value = false
-  editingDoc.value = null
-  Object.keys(form).forEach(key => form[key] = '')
-  form.type = '通知'
 }
+
+const loadDocuments = async () => {
+  try {
+    const response = await getDocuments()
+    if (response.code === 200) {
+      allDocuments.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to load documents:', error)
+  }
+}
+
+onMounted(loadDocuments)
 </script>
 
 <style scoped>

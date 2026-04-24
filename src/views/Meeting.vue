@@ -136,16 +136,17 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" @click="showCreateModal = false">取消</button>
-        <button class="btn btn-primary" @click="createMeeting">创建会议</button>
+        <button class="btn btn-primary" @click="handleCreateMeeting">创建会议</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
+import { getMeetings, createMeeting } from '@/api'
 
 const filterStatus = ref('')
 const filterType = ref('')
@@ -164,12 +165,7 @@ const form = reactive({
   agenda: ''
 })
 
-const meetings = ref([
-  { id: 1, title: '党委扩大会议', type: '党委会议', date: '2024-01-15', time: '14:30 - 16:00', location: '一号会议室', topic: '研究部署年度重点工作', status: 'processing' },
-  { id: 2, title: '周工作例会', type: '行政会议', date: '2024-01-16', time: '09:00 - 10:30', location: '二号会议室', topic: '本周工作小结及下周计划安排', status: 'pending' },
-  { id: 3, title: '安全培训会议', type: '培训会议', date: '2024-01-14', time: '15:00 - 17:00', location: '培训室', topic: '消防安全知识培训', status: 'completed' },
-  { id: 4, title: '训练工作部署会', type: '业务会议', date: '2024-01-17', time: '10:00 - 11:30', location: '一号会议室', topic: '年度训练计划部署', status: 'pending' }
-])
+const meetings = ref([])
 
 const filteredMeetings = computed(() => {
   return meetings.value.filter(meeting => {
@@ -219,22 +215,42 @@ const handleMeetingAction = (meeting) => {
   console.log('Action:', meeting.title, getActionBtnText(meeting.status))
 }
 
-const createMeeting = () => {
-  meetings.value.unshift({
-    id: Date.now(),
-    title: form.title,
-    type: form.type,
-    date: form.date,
-    time: `${form.startTime} - ${form.endTime}`,
-    location: form.location,
-    topic: form.agenda.substring(0, 20) + '...',
-    status: 'pending'
-  })
-  showCreateModal.value = false
-  Object.keys(form).forEach(key => form[key] = '')
-  form.type = '行政会议'
-  form.location = '一号会议室'
+const handleCreateMeeting = async () => {
+  try {
+    const response = await createMeeting({
+      title: form.title,
+      type: form.type,
+      date: form.date,
+      time: `${form.startTime} - ${form.endTime}`,
+      location: form.location,
+      participants: form.participants,
+      agenda: form.agenda,
+      status: 'pending'
+    })
+    if (response.code === 200) {
+      meetings.value.unshift(response.data)
+    }
+    showCreateModal.value = false
+    Object.keys(form).forEach(key => form[key] = '')
+    form.type = '行政会议'
+    form.location = '一号会议室'
+  } catch (error) {
+    console.error('Failed to create meeting:', error)
+  }
 }
+
+const loadMeetings = async () => {
+  try {
+    const response = await getMeetings()
+    if (response.code === 200) {
+      meetings.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to load meetings:', error)
+  }
+}
+
+onMounted(loadMeetings)
 </script>
 
 <style scoped>

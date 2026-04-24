@@ -42,7 +42,14 @@
             <img :src="captchaImage" alt="验证码" class="captcha-img" />
           </div>
         </div>
-        <button type="submit" class="login-btn">登录</button>
+        <div v-if="errorMessage" class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ errorMessage }}
+        </div>
+        <button type="submit" class="login-btn" :disabled="isLoading">
+          <i v-if="isLoading" class="fas fa-spinner fa-spin"></i>
+          {{ isLoading ? '登录中...' : '登录' }}
+        </button>
       </form>
       <div class="login-links">
         <a href="#">忘记密码?</a>
@@ -55,6 +62,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { login } from '@/api'
 
 const router = useRouter()
 
@@ -64,10 +72,28 @@ const form = reactive({
   captcha: ''
 })
 
+const errorMessage = ref('')
+const isLoading = ref(false)
+
 const captchaImage = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCAyMDAgNjAiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmNWY3ZmEiLz48dGV4dCB4PSIxMDBweSIgeT0iMzZweCIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIj5TR04gMTAwPC90ZXh0Pjwvc3ZnPg==')
 
-const handleLogin = () => {
-  router.push('/dashboard')
+const handleLogin = async () => {
+  errorMessage.value = ''
+  isLoading.value = true
+  
+  try {
+    const response = await login(form.username, form.password)
+    if (response.code === 200) {
+      sessionStorage.setItem('user', JSON.stringify(response.data))
+      router.push('/dashboard')
+    } else {
+      errorMessage.value = response.message || '登录失败'
+    }
+  } catch (error) {
+    errorMessage.value = '网络连接失败，请稍后重试'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -185,5 +211,22 @@ const handleLogin = () => {
 .login-links a:hover {
   color: #1e3c72;
   text-decoration: underline;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 </style>

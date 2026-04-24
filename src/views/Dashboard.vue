@@ -82,24 +82,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
+import { getDocuments, getApprovals, getTasks } from '@/api'
 
 const stats = ref([
-  { value: '128', label: '待处理公文', icon: 'fas fa-file-text', color: 'blue' },
-  { value: '256', label: '已完成审批', icon: 'fas fa-check-circle', color: 'green' },
-  { value: '15', label: '待办事项', icon: 'fas fa-clock', color: 'orange' },
-  { value: '3', label: '超时预警', icon: 'fas fa-exclamation-triangle', color: 'red' }
+  { value: '0', label: '待处理公文', icon: 'fas fa-file-text', color: 'blue' },
+  { value: '0', label: '已完成审批', icon: 'fas fa-check-circle', color: 'green' },
+  { value: '0', label: '待办事项', icon: 'fas fa-clock', color: 'orange' },
+  { value: '0', label: '超时预警', icon: 'fas fa-exclamation-triangle', color: 'red' }
 ])
 
-const documents = ref([
-  { id: 1, title: '关于开展年度训练考核的通知', type: '通知', source: '司令部', date: '2024-01-15', status: 'pending' },
-  { id: 2, title: '关于申请采购办公设备的请示', type: '请示', source: '后勤处', date: '2024-01-14', status: 'processing' },
-  { id: 3, title: '关于表彰优秀士兵的通报', type: '通报', source: '政治处', date: '2024-01-13', status: 'pending' },
-  { id: 4, title: '关于召开年度总结会议的通知', type: '通知', source: '办公室', date: '2024-01-12', status: 'approved' }
-])
-
+const documents = ref([])
 const todos = ref([
   { id: 1, title: '审批后勤处采购申请', time: '截止时间: 2024-01-16', status: 'pending', completed: false },
   { id: 2, title: '参加党委扩大会议', time: '时间: 2024-01-15 14:30', status: 'processing', completed: false },
@@ -123,6 +118,30 @@ const toggleTodo = (item) => {
 const handleDocAction = (doc) => {
   console.log('Action on:', doc.title)
 }
+
+const loadData = async () => {
+  try {
+    const docResponse = await getDocuments({ status: 'pending' })
+    if (docResponse.code === 200) {
+      documents.value = docResponse.data.slice(0, 4)
+      stats.value[0].value = docResponse.data.length.toString()
+    }
+    
+    const approvalResponse = await getApprovals({ status: 'approved' })
+    if (approvalResponse.code === 200) {
+      stats.value[1].value = approvalResponse.data.length.toString()
+    }
+    
+    const taskResponse = await getTasks({ status: 'pending' })
+    if (taskResponse.code === 200) {
+      stats.value[2].value = taskResponse.data.length.toString()
+    }
+  } catch (error) {
+    console.error('Failed to load data:', error)
+  }
+}
+
+onMounted(loadData)
 </script>
 
 <style scoped>

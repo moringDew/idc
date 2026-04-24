@@ -98,9 +98,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
+import { getTasks } from '@/api'
 
 const filterStatus = ref('')
 const filterPriority = ref('')
@@ -109,18 +110,13 @@ const endDate = ref('')
 const currentPage = ref(1)
 
 const stats = ref([
-  { value: '45', label: '督办任务总数', icon: 'fas fa-tasks', color: 'blue' },
-  { value: '32', label: '已完成', icon: 'fas fa-check-circle', color: 'green' },
-  { value: '10', label: '进行中', icon: 'fas fa-clock', color: 'orange' },
-  { value: '3', label: '超时预警', icon: 'fas fa-exclamation-triangle', color: 'red' }
+  { value: '0', label: '督办任务总数', icon: 'fas fa-tasks', color: 'blue' },
+  { value: '0', label: '已完成', icon: 'fas fa-check-circle', color: 'green' },
+  { value: '0', label: '进行中', icon: 'fas fa-clock', color: 'orange' },
+  { value: '0', label: '超时预警', icon: 'fas fa-exclamation-triangle', color: 'red' }
 ])
 
-const tasks = ref([
-  { id: 1, title: '完成年度训练计划编制', department: '司令部', person: '李XX', deadline: '2024-01-20', priority: 'urgent', progress: 70, status: 'processing' },
-  { id: 2, title: '完善安全管理制度', department: '政治处', person: '王XX', deadline: '2024-01-18', priority: 'important', progress: 100, status: 'completed' },
-  { id: 3, title: '采购办公设备', department: '后勤处', person: '张XX', deadline: '2024-01-16', priority: 'urgent', progress: 30, status: 'pending' },
-  { id: 4, title: '组织年度考核', department: '司令部', person: '赵XX', deadline: '2024-01-14', priority: 'normal', progress: 100, status: 'completed' }
-])
+const tasks = ref([])
 
 const filteredTasks = computed(() => {
   return tasks.value.filter(task => {
@@ -161,6 +157,22 @@ const viewDetail = (task) => {
 const urgeTask = (task) => {
   console.log('Urge task:', task.title)
 }
+
+const loadTasks = async () => {
+  try {
+    const response = await getTasks()
+    if (response.code === 200) {
+      tasks.value = response.data
+      stats.value[0].value = tasks.value.length.toString()
+      stats.value[1].value = tasks.value.filter(t => t.status === 'completed').length.toString()
+      stats.value[2].value = tasks.value.filter(t => t.status === 'processing').length.toString()
+    }
+  } catch (error) {
+    console.error('Failed to load tasks:', error)
+  }
+}
+
+onMounted(loadTasks)
 </script>
 
 <style scoped>

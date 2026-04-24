@@ -1,11 +1,13 @@
 node_modules/
 dist/
+backend/target/
 dist-ssr/
 *.local
 
 .DS_Store
 Thumbs.db
 
+.idea/
 .vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json

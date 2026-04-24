@@ -125,9 +125,10 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TopNav from '@/components/TopNav.vue'
+import { getKnowledge, createKnowledge } from '@/api'
 
 const searchKeyword = ref('')
 const activeTab = ref('all')
@@ -146,27 +147,59 @@ const tabs = [
 ]
 
 const folders = [
-  { name: '规章制度', count: 12, color: 'blue' },
-  { name: '训练资料', count: 28, color: 'green' },
-  { name: '会议纪要', count: 15, color: 'orange' },
-  { name: '工作总结', count: 8, color: 'red' }
+  { name: '规章制度', count: 0, color: 'blue' },
+  { name: '训练资料', count: 0, color: 'green' },
+  { name: '会议纪要', count: 0, color: 'orange' },
+  { name: '工作总结', count: 0, color: 'red' }
 ]
 
-const recentFiles = ref([
-  { id: 1, name: '2024年度训练计划.docx', type: 'Word文档', size: '256 KB', time: '2024-01-15 10:30', iconClass: 'fas fa-file-word', iconColor: '#1e3c72' },
-  { id: 2, name: '安全管理制度.pdf', type: 'PDF文档', size: '1.2 MB', time: '2024-01-14 15:20', iconClass: 'fas fa-file-pdf', iconColor: '#dc3545' },
-  { id: 3, name: '物资采购清单.xlsx', type: 'Excel表格', size: '128 KB', time: '2024-01-13 09:15', iconClass: 'fas fa-file-excel', iconColor: '#28a745' }
-])
+const recentFiles = ref([])
 
 const openFolder = (folder) => {
   console.log('Open folder:', folder.name)
 }
 
-const uploadFile = () => {
+const uploadFile = async () => {
+  try {
+    const response = await createKnowledge({
+      name: '上传的文档',
+      folder: uploadForm.folder || '未分类',
+      description: uploadForm.description
+    })
+    if (response.code === 200) {
+      recentFiles.value.unshift(response.data)
+    }
+  } catch (error) {
+    console.error('Failed to upload:', error)
+  }
   showUploadModal.value = false
   uploadForm.folder = ''
   uploadForm.description = ''
 }
+
+const loadKnowledge = async () => {
+  try {
+    const response = await getKnowledge()
+    if (response.code === 200) {
+      recentFiles.value = response.data.map(item => ({
+        ...item,
+        iconClass: item.type?.includes('Word') ? 'fas fa-file-word' : 
+                   item.type?.includes('PDF') ? 'fas fa-file-pdf' : 
+                   item.type?.includes('Excel') ? 'fas fa-file-excel' : 'fas fa-file',
+        iconColor: item.type?.includes('Word') ? '#1e3c72' : 
+                   item.type?.includes('PDF') ? '#dc3545' : 
+                   item.type?.includes('Excel') ? '#28a745' : '#666'
+      }))
+      folders.forEach(folder => {
+        folder.count = response.data.filter(k => k.folder === folder.name).length
+      })
+    }
+  } catch (error) {
+    console.error('Failed to load knowledge:', error)
+  }
+}
+
+onMounted(loadKnowledge)
 </script>
 
 <style scoped>
